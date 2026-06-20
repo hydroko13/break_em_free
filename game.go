@@ -1,35 +1,43 @@
 package main
 
 import (
-	"image/color"
 	"errors"
+	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	//"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
-
 var closeGame error = errors.New("Game closed")
 
 type Game struct {
-	
+	cam    Camera
+	player Player
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	screen.Fill(color.Black)
+	screen.Fill(color.RGBA{59, 58, 58, 255})
+
+	g.player.Draw(screen, g.cam)
+
 }
 
 func (g *Game) Update() error {
-
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
 		return closeGame
 	}
 
+	g.player.Update()
+
+	g.cam.x += (g.player.x - g.cam.x) * DELTA * 4.2
+	g.cam.y += (g.player.y - g.cam.y) * DELTA * 4.2
+	
+
 	return nil
 }
 
 func (g *Game) Layout(inWidth, inHeight int) (outWidth, outHeight int) {
-	return 480, 270
+	return WIDTH, HEIGHT
 }
