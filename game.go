@@ -2,9 +2,9 @@ package main
 
 import (
 	"errors"
-	"image/color"
-
 	"github.com/hajimehoshi/ebiten/v2"
+	"image/color"
+	"sync"
 	//"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
@@ -12,16 +12,22 @@ import (
 var closeGame error = errors.New("Game closed")
 
 type Game struct {
-	cam     Camera
-	player  Player
-	tilemap Tilemap
+	cam           Camera
+	player        Player
+	tilemap       Tilemap
+	tilemap_mutex sync.Mutex
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{59, 58, 58, 255})
 
 	g.player.Draw(screen, g.cam)
+
+	g.tilemap_mutex.Lock()
+
 	g.tilemap.Draw(screen, g.cam)
+
+	g.tilemap_mutex.Unlock()
 
 }
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/aquilax/go-perlin"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -35,24 +36,18 @@ func main() {
 	var groundtileset_spritesheet *ebiten.Image
 
 	groundtileset_spritesheet, _, err = ebitenutil.NewImageFromFileSystem(assetsFolder, "assets/groundtileset.png")
-	
 
-	
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	wg := WorldGenerator{noise1: perlin.NewPerlin(2, 2, 3, 123)}
 
 	tilemap := NewTilemap(NewSpritesheet(groundtileset_spritesheet, 16, 16))
 
-	tile_chunk1 := NewEmptyTileChunk(0, 1)
-	tile_chunk2 := NewEmptyTileChunk(1, 1)
-	tile_chunk1.chunk_data[0] = 1
-	tile_chunk2.chunk_data[0] = 1
-
-	tilemap.tile_chunks = append(tilemap.tile_chunks, tile_chunk1, tile_chunk2)
-
 	game := &Game{player: Player{ss: NewSpritesheet(player_spritesheet, 32, 32)}, tilemap: tilemap}
+
+	go wg.StartGenerating(&game.tilemap, &game.tilemap_mutex)
 
 	gameErr := ebiten.RunGame(game)
 

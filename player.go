@@ -1,6 +1,8 @@
 package main
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 type Player struct {
 	ss      Spritesheet
@@ -20,9 +22,10 @@ func (p Player) Draw(screen *ebiten.Image, cam Camera) {
 		op.GeoM.Scale(1, 1)
 	}
 
-	op.GeoM.Translate(x, y)
+	op.GeoM.Translate(x-16, y-24)
 
 	screen.DrawImage(p.ss.GetFrame(0, 0), &op)
+
 }
 
 func (p *Player) Update() {
