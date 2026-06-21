@@ -3,9 +3,9 @@ package main
 import "github.com/hajimehoshi/ebiten/v2"
 
 type Player struct {
-	ss   Spritesheet
-	x, y float64
-	vely float64
+	ss      Spritesheet
+	x, y    float64
+	vely    float64
 	flipped bool
 }
 
@@ -19,15 +19,11 @@ func (p Player) Draw(screen *ebiten.Image, cam Camera) {
 	} else {
 		op.GeoM.Scale(1, 1)
 	}
-	
-
-	
 
 	op.GeoM.Translate(x, y)
-	
+
 	screen.DrawImage(p.ss.GetFrame(0, 0), &op)
 }
-
 
 func (p *Player) Update() {
 
@@ -42,6 +38,5 @@ func (p *Player) Update() {
 
 	p.y += p.vely * DELTA
 	p.vely += DELTA * 50
-	
-	
+
 }

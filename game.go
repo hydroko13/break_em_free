@@ -12,14 +12,16 @@ import (
 var closeGame error = errors.New("Game closed")
 
 type Game struct {
-	cam    Camera
-	player Player
+	cam     Camera
+	player  Player
+	tilemap Tilemap
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{59, 58, 58, 255})
 
 	g.player.Draw(screen, g.cam)
+	g.tilemap.Draw(screen, g.cam)
 
 }
 
@@ -33,7 +35,6 @@ func (g *Game) Update() error {
 
 	g.cam.x += (g.player.x - g.cam.x) * DELTA * 4.2
 	g.cam.y += (g.player.y - g.cam.y) * DELTA * 4.2
-	
 
 	return nil
 }
