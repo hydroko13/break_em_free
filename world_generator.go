@@ -1,9 +1,12 @@
 package main
 
-import "sync"
-import "time"
-import "github.com/aquilax/go-perlin"
-import "slices"
+import (
+	"slices"
+	"sync"
+
+
+	"github.com/aquilax/go-perlin"
+)
 
 type WorldGenerator struct {
 	noise1 *perlin.Perlin
@@ -18,6 +21,8 @@ func (wg *WorldGenerator) StartGenerating(tilemap *Tilemap, tilemap_mutex *sync.
 	generated_positions := make([]ChunkPos, 0, 15)
 
 	for {
+		new_chunks := make([]TileChunk, 0, 50)
+
 		for x := -4; x < 4; x += 1 {
 			for y := -4; y < 4; y += 1 {
 				if !slices.Contains(generated_positions, ChunkPos{x: x, y: y}) {
@@ -40,16 +45,23 @@ func (wg *WorldGenerator) StartGenerating(tilemap *Tilemap, tilemap_mutex *sync.
 						}
 					}
 
-					tilemap_mutex.Lock()
-					chunk.Redraw(tilemap.tile_ss)
-					tilemap.tile_chunks = append(tilemap.tile_chunks, chunk)
-					tilemap_mutex.Unlock()
-					time.Sleep(time.Millisecond * 8)
+					new_chunks = append(new_chunks, chunk)
 
+					
 				}
 
 			}
 		}
+		tilemap_mutex.Lock()
+		for _, chunk := range new_chunks {
+			chunk.Redraw(tilemap.tile_ss)
+			tilemap.tile_chunks = append(tilemap.tile_chunks, chunk)
+		}	
+	
+		tilemap_mutex.Unlock()
+
+
+
 	}
 
 }
